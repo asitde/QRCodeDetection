@@ -328,7 +328,7 @@ bool QRCodeDetector::ProcessEx(const std::string& rstrImageFile)
 
 				double d = abs(cvContourArea(approx, CV_WHOLE_SEQ, 0));
 
-				int iMinArea = iRows / 2; // 100/ 2000
+				int iMinArea = iRows / 4; // 100/ 2000
 				int iMaxArea = iMinArea * 10; // 25000
 
 			if((approx->total == 4 && abs(cvContourArea(approx, CV_WHOLE_SEQ, 0)) > iMinArea && abs(cvContourArea(approx, CV_WHOLE_SEQ, 0)) < iMaxArea && cvCheckContourConvexity(approx) != 0) && (result->total == 4))
@@ -509,64 +509,103 @@ bool QRCodeDetector::ProcessEx(const std::string& rstrImageFile)
 			ptBottom1.x = -1;
 			ptBottom1.y = -1;
 
-			if ((abs(ptCtrBoxQR[2].y - ptCtrBoxQR[0].y) > dArm * 2) && (abs(ptCtrBoxQR[2].y - ptCtrBoxQR[1].y) > dArm * 2) &&
-				(abs(ptCtrBoxQR[1].y - ptCtrBoxQR[0].y) < dArm * 2)) {
+			if ((ptCtrBoxQR[2].x < ptCtrBoxQR[1].x) && (ptCtrBoxQR[2].x < ptCtrBoxQR[0].x)) {
+				iLeft = 2;
+			}
+			else if ((ptCtrBoxQR[1].x < ptCtrBoxQR[0].x) && (ptCtrBoxQR[1].x < ptCtrBoxQR[2].x)) {
+				iLeft = 1;
+			}
+			else {
+				iLeft = 0;
+			}
+
+			if ((ptCtrBoxQR[2].x > ptCtrBoxQR[1].x) && (ptCtrBoxQR[2].x > ptCtrBoxQR[0].x)) {
+				iRight = 2;
+			}
+			else if ((ptCtrBoxQR[1].x > ptCtrBoxQR[0].x) && (ptCtrBoxQR[1].x > ptCtrBoxQR[2].x)) {
+				iRight = 1;
+			}
+			else {
+				iRight = 0;
+			}
+
+			if ((ptCtrBoxQR[2].y < ptCtrBoxQR[1].y) && (ptCtrBoxQR[2].y < ptCtrBoxQR[0].y)) {
+				iTop = 2;
+			}
+			else if ((ptCtrBoxQR[1].y < ptCtrBoxQR[0].y) && (ptCtrBoxQR[1].y < ptCtrBoxQR[2].y)) {
+				iTop = 1;
+			}
+			else {
+				iTop = 0;
+			}
+
+			if ((ptCtrBoxQR[2].y > ptCtrBoxQR[1].y) && (ptCtrBoxQR[2].y > ptCtrBoxQR[0].y)) {
 				iBottom = 2;
-
-				if (ptCtrBoxQR[1].x > ptCtrBoxQR[0].x) {
-					iLeft = 0;
-					iRight = 1;
-				}
-				else {
-					iLeft = 1;
-					iRight = 0;
-				}
-				if (ptCtrBoxQR[1].y > ptCtrBoxQR[0].y) {
-					iTop = 0;
-				}
-				else {
-					iTop = 1;
-				}
-
 			}
-			else if ((abs(ptCtrBoxQR[1].y - ptCtrBoxQR[0].y) > dArm * 2) && (abs(ptCtrBoxQR[1].y - ptCtrBoxQR[1].y) > dArm * 2) &&
-				(abs(ptCtrBoxQR[2].y - ptCtrBoxQR[0].y) < dArm * 2)) {
+			else if ((ptCtrBoxQR[1].y > ptCtrBoxQR[0].y) && (ptCtrBoxQR[1].y > ptCtrBoxQR[2].y)) {
 				iBottom = 1;
-				if (ptCtrBoxQR[2].x > ptCtrBoxQR[0].x) {
-					iLeft = 0;
-					iRight = 2;
-				}
-				else {
-					iLeft = 2;
-					iRight = 0;
-				}
-				if (ptCtrBoxQR[2].y > ptCtrBoxQR[0].y) {
-					iTop = 0;
-				}
-				else {
-					iTop = 1;
-				}
-
 			}
-			else if ((abs(ptCtrBoxQR[0].y - ptCtrBoxQR[1].y) > dArm * 2) && (abs(ptCtrBoxQR[0].y - ptCtrBoxQR[2].y) > dArm * 2) &&
-				(abs(ptCtrBoxQR[2].y - ptCtrBoxQR[1].y) < dArm * 2)) {
+			else {
 				iBottom = 0;
-				if (ptCtrBoxQR[2].x > ptCtrBoxQR[1].x) {
-					iLeft = 1;
-					iRight = 2;
-				}
-				else {
-					iLeft = 2;
-					iRight = 1;
-				}
-				if (ptCtrBoxQR[1].y > ptCtrBoxQR[1].y) {
-					iTop = 1;
-				}
-				else {
-					iTop = 2;
-				}
-
 			}
+			///*if ((abs(ptCtrBoxQR[2].y - ptCtrBoxQR[0].y) > dArm * 2) && (abs(ptCtrBoxQR[2].y - ptCtrBoxQR[1].y) > dArm * 2) &&
+			//	(abs(ptCtrBoxQR[1].y - ptCtrBoxQR[0].y) < dArm * 2)) {
+			//	iBottom = 2;
+
+			//	if (ptCtrBoxQR[1].x > ptCtrBoxQR[0].x) {
+			//		iLeft = 0;
+			//		iRight = 1;
+			//	}
+			//	else {
+			//		iLeft = 1;
+			//		iRight = 0;
+			//	}
+			//	if (ptCtrBoxQR[1].y > ptCtrBoxQR[0].y) {
+			//		iTop = 0;
+			//	}
+			//	else {
+			//		iTop = 1;
+			//	}
+
+			//}
+			//else if ((abs(ptCtrBoxQR[1].y - ptCtrBoxQR[0].y) > dArm * 2) && (abs(ptCtrBoxQR[1].y - ptCtrBoxQR[1].y) > dArm * 2) &&
+			//	(abs(ptCtrBoxQR[2].y - ptCtrBoxQR[0].y) < dArm * 2)) {
+			//	iBottom = 1;
+			//	if (ptCtrBoxQR[2].x > ptCtrBoxQR[0].x) {
+			//		iLeft = 0;
+			//		iRight = 2;
+			//	}
+			//	else {
+			//		iLeft = 2;
+			//		iRight = 0;
+			//	}
+			//	if (ptCtrBoxQR[2].y > ptCtrBoxQR[0].y) {
+			//		iTop = 0;
+			//	}
+			//	else {
+			//		iTop = 1;
+			//	}
+
+			//}
+			//else if ((abs(ptCtrBoxQR[0].y - ptCtrBoxQR[1].y) > dArm * 2) && (abs(ptCtrBoxQR[0].y - ptCtrBoxQR[2].y) > dArm * 2) &&
+			//	(abs(ptCtrBoxQR[2].y - ptCtrBoxQR[1].y) < dArm * 2)) {
+			//	iBottom = 0;
+			//	if (ptCtrBoxQR[2].x > ptCtrBoxQR[1].x) {
+			//		iLeft = 1;
+			//		iRight = 2;
+			//	}
+			//	else {
+			//		iLeft = 2;
+			//		iRight = 1;
+			//	}
+			//	if (ptCtrBoxQR[1].y > ptCtrBoxQR[1].y) {
+			//		iTop = 1;
+			//	}
+			//	else {
+			//		iTop = 2;
+			//	}
+
+			//}*/
 			if (iLeft > -1 && iRight > -1 && iBottom > -1 && iTop > -1) {
 				if ((abs(ptCtrBoxQR[iLeft].y - ptCtrBoxQR[iRight].y)) < 25) {
 					ptTop1.x = (ptCtrBoxQR[iLeft].x + ptCtrBoxQR[iRight].x) / 2;
